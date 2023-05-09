@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<div id="chat-container">
+    <div id="messages"></div>
+    <div id="input-container">
+        <input id="message-input" type="text">
+        <button id="send-button">Send</button>
+    </div>
+</div>
+
+<script>
+$(function() {
+    var messages = $('#messages');
+    var input = $('#message-input');
+    var button = $('#send-button');
+
+    function addMessage(sender, message) {
+        messages.append('<div class="message"><span class="sender">' + sender + ':</span> ' + message + '</div>');
+    }
+
+    function addOptions(options) {
+        var optionsHtml = '';
+
+        for (var i = 0; i < options.length; i++) {
+            optionsHtml += '<button class="option-button">' + options[i] + '</button>';
+        }
+
+        messages.append('<div class="options">' + optionsHtml + '</div>');
+
+        $('.option-button').click(function() {
+            var option = $(this).text();
+            $('.options').remove();
+
+            addMessage('User', option);
+
+            $.ajax({
+                url: '/api/chatbot',
+                method: 'POST',
+                data: {message: option},
+                success: function(response) {
+                    addMessage('Bot', response.message);
+
+                    if (response.options) {
+                        addOptions(response.options);
+                    }
+
+                    if (response.form) {
+                        addForm();
+                    }
+                }
+            });
+        });
+    }
+
+    function addForm() {
+        messages.append('<div class="form">' +
+            '<input type="text" name="name" placeholder="Name">' +
+            '<input type="text" name="mobile" placeholder="Mobile Number">' +
+            '<input type="text" name="email" placeholder="Email">' +
+            '<button class="submit-button">Submit</button>' +
+        '</div>');
+
+        $('.submit-button').click(function() {
+            var name = $('.form input:nth-of-type(1)').val();
+            var mobile = $('.form input:nth-of-type(2)').val();
+            var email = $('.form input:nth-of-type(3)').val();
+
+            if (name && mobile && email) {
+                $.ajax({
+                    url: '/api/chatbot',
+                    method: 'POST',
+                    data: {name: name, mobile: mobile, email: email},
+                    success: function(response) {
+                        addMessage('Bot', response.message);
+                    }
+                });
+            }
+        });
+    }
+
+    button.click(function() {
+        var message = input.val();
+        input.val('');
+
+        if (message) {
+            addMessage('User', message);
+
+            $.ajax({
+                url: '/api/chatbot',
+                method: 'POST',
+                data: {message: message},
+                success: function(response) {
+                    addMessage('Bot', response.message);
+
+                    if (response.options) {
+                        addOptions(response.options);
+                    }
+
+                    if (response.form) {
+                        addForm();
+                    }
+                }
+            });
+        }
+    });
+});
+</script>
+
+</body>
+</html>
