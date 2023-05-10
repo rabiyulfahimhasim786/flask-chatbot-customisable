@@ -3,6 +3,105 @@
 <head>
     <title>Chatbot</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            margin: 0;
+            background-color: #f2f2f2;
+        }
+        #header {
+            background-color: #4CAF50;
+            padding: 10px;
+            color: white;
+            text-align: center;
+        }
+        #chat-container {
+            margin: 50px auto;
+            max-width: 600px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        #messages {
+            height: 400px;
+            overflow-y: scroll;
+            padding: 10px;
+        }
+        .message {
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .bot-message {
+            background-color: #f2f2f2;
+        }
+        .user-message {
+            background-color: #4CAF50;
+            color: white;
+            text-align: right;
+        }
+        #input-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f2f2f2;
+        }
+        #message-input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        #send-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .option-button {
+            margin: 5px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .form {
+            margin: 10px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .form input[type=text] {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .submit-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
@@ -13,105 +112,7 @@
         <button id="send-button">Send</button>
     </div>
 </div>
-<!-- 
-<script>
-$(function() {
-    var messages = $('#messages');
-    var input = $('#message-input');
-    var button = $('#send-button');
 
-    function addMessage(sender, message) {
-        messages.append('<div class="message"><span class="sender">' + sender + ':</span> ' + message + '</div>');
-    }
-
-    function addOptions(options) {
-        var optionsHtml = '';
-
-        for (var i = 0; i < options.length; i++) {
-            optionsHtml += '<button class="option-button">' + options[i] + '</button>';
-        }
-
-        messages.append('<div class="options">' + optionsHtml + '</div>');
-
-        $('.option-button').click(function() {
-            var option = $(this).text();
-            $('.options').remove();
-
-            addMessage('User', option);
-
-            $.ajax({
-                url: '/api/chatbot',
-                method: 'POST',
-                data: {message: option},
-                success: function(response) {
-                    addMessage('Bot', response.message);
-
-                    if (response.options) {
-                        addOptions(response.options);
-                    }
-
-                    if (response.form) {
-                        addForm();
-                    }
-                }
-            });
-        });
-    }
-
-    function addForm() {
-        messages.append('<form action="" method="POST">'+
-            '<div class="form">' +
-            '<input type="text"  placeholder="Name">' +
-            '<input type="text"  placeholder="Mobile Number">' +
-            '<input type="text" placeholder="Email">' +
-            '<button type="submit" class="submit-button">Submit</button>' +
-        '</div>'+'</form>');
-
-        $('.submit-button').click(function() {
-            var name = $('.form input:nth-of-type(1)').val();
-            var mobile = $('.form input:nth-of-type(2)').val();
-            var email = $('.form input:nth-of-type(3)').val();
-
-            if (name && mobile && email) {
-                $.ajax({
-                    url: '/api/chatbot',
-                    method: 'POST',
-                    data: {name: name, mobile: mobile, email: email},
-                    success: function(response) {
-                        addMessage('Bot', response.message);
-                    }
-                });
-            }
-        });
-    }
-
-    button.click(function() {
-        var message = input.val();
-        input.val('');
-
-        if (message) {
-            addMessage('User', message);
-
-            $.ajax({
-                url: '/api/chatbot',
-                method: 'POST',
-                data: {message: message},
-                success: function(response) {
-                    addMessage('Bot', response.message);
-
-                    if (response.options) {
-                        addOptions(response.options);
-                    }
-
-                    if (response.form) {
-                        addForm();
-                    }
-                }
-            });
-        }
-    });
-});
-</script> -->
 <script>
     $(function() {
     var messages = $('#messages');
@@ -121,6 +122,11 @@ $(function() {
     function addMessage(sender, message) {
         messages.append('<div class="message"><span class="sender">' + sender + ':</span> ' + message + '</div>');
     }
+
+    
+    addMessage('Bot', 'Hello! How can I assist you today?');
+    addOptions(['Magento']);
+
 
     function addOptions(options) {
         var optionsHtml = '';
@@ -159,7 +165,8 @@ $(function() {
     function addForm() {
     messages.append('<form action="/submit-form" method="POST">' +
         '<div class="form">' +
-        '<input type="text" name="name" placeholder="Name">' +
+        '<input type="text" name="url" placeholder="Url">' +
+        '<input type="text" name="version" placeholder="Mgento Version">' +
         '<input type="text" name="mobile" placeholder="Mobile Number">' +
         '<input type="text" name="email" placeholder="Email">' +
         '<button type="submit" class="submit-button">Submit</button>' +

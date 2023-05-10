@@ -122,11 +122,6 @@ $(function() {
         messages.append('<div class="message"><span class="sender">' + sender + ':</span> ' + message + '</div>');
     }
 
-    
-    addMessage('Bot', 'Hello! How can I assist you today?');
-    addOptions(['Magento']);
-
-
     function addOptions(options) {
         var optionsHtml = '';
 
@@ -164,8 +159,7 @@ $(function() {
     function addForm() {
     messages.append('<form action="/submit-form" method="POST">' +
         '<div class="form">' +
-        '<input type="text" name="url" placeholder="Url">' +
-        '<input type="text" name="version" placeholder="Mgento Version">' +
+        '<input type="text" name="name" placeholder="Name">' +
         '<input type="text" name="mobile" placeholder="Mobile Number">' +
         '<input type="text" name="email" placeholder="Email">' +
         '<button type="submit" class="submit-button">Submit</button>' +

@@ -12,9 +12,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50), nullable=False)
+    url = db.Column(db.String(50), nullable=False)
+    version = db.Column(db.String(50), nullable=False)
     mobile = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
 if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']):
     create_database(app.config['SQLALCHEMY_DATABASE_URI'])
     app.app_context().push()
@@ -63,17 +64,19 @@ def chatbot():
     message = request.form['message']
     response = {}
 
-    if message.lower() == 'hi':
-        response['message'] = 'Hi, are you looking for help?'
+    if message.lower() == 'magento':
+        response['message'] = 'do you need to build new site'
         response['options'] = ['Yes', 'No']
 
     elif message.lower() == 'yes':
-        response['message'] = 'What kind of help are you looking for?'
-        response['options'] = ['Help1', 'Help2', 'Help3']
+        response['message'] = 'What is your website url and your current version for magento?'
+        # response['options'] = ['Help1', 'Help2', 'Help3']
+        response['form'] = True
 
     elif message.lower() == 'no':
-        response['message'] = 'I am sorry, I didn\'t understand your request. Please fill out the form below:'
-        response['form'] = True
+        response['message'] = 'Do you need to redesign or Do you need to any maintenance and support? select below:'
+        # response['form'] = True
+        response['options'] = ['redesign', 'maintenance and support']
 
         #Save the data to the database
         # name = request.form.get('name')
@@ -88,24 +91,29 @@ def chatbot():
         #     'message': 'Please fill out the form',
         #     }
             #message = request.form.get('message')
-        name = request.form.get('name')
-        email = request.form.get('email')
-        mobile = request.form.get('mobile')
-            # name = request.form['name']
-            # email = request.form['email']
-            # mobile = request.form['mobile']
+        # name = request.form.get('name')
+        # email = request.form.get('email')
+        # mobile = request.form.get('mobile')
+        #     # name = request.form['name']
+        #     # email = request.form['email']
+        #     # mobile = request.form['mobile']
         
 
-        print(name, email, mobile)
-        if name and email and mobile:
-            user = User(name=name, email=email, mobile=mobile)
-            db.session.add(user)
-            db.session.commit()
-            response['message'] = 'Thanks for submitting the form!'
-            #response['form'] = False
-        else:
-            response['message'] = 'Please fill out all fields.'
-   
+        # print(name, email, mobile)
+        # if name and email and mobile:
+        #     user = User(name=name, email=email, mobile=mobile)
+        #     db.session.add(user)
+        #     db.session.commit()
+        #     response['message'] = 'Thanks for submitting the form!'
+        #     #response['form'] = False
+        # else:
+        #     response['message'] = 'Please fill out all fields.'
+    elif message.lower() == 'redesign':
+        response['message'] = 'What is your website url and your current version for magento?'
+        response['form'] = True
+    elif message.lower() == 'maintenance and support':
+        response['message'] = 'What is your website url and your current version for magento?'
+        response['form'] = True
     else:
         response['message'] = 'I am sorry, I didn\'t understand your request. Please try again.'
         response['options'] = ['Yes', 'No']
@@ -115,13 +123,14 @@ def chatbot():
 
 @app.route('/submit-form', methods=['POST'])
 def submit_form():
-    name = request.form.get('name')
-    email = request.form.get('email')
+    url = request.form.get('url')
+    version = request.form.get('version')
     mobile = request.form.get('mobile')
+    email = request.form.get('email')
     # do something with the form data
-    print(name, email, mobile)
-    if name and email and mobile:
-        user = User(name=name, email=email, mobile=mobile)
+    print(url, version, email, mobile)
+    if url and version and email and mobile:
+        user = User(url=url, version=version, email=email, mobile=mobile)
         db.session.add(user)
         db.session.commit()
         #response['message'] = 'Thanks for submitting the form!'
