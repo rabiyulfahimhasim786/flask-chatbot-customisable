@@ -13,7 +13,8 @@ db = SQLAlchemy(app)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(50), nullable=False)
-    version = db.Column(db.String(50), nullable=False)
+    # version = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(20), nullable=False)
     mobile = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(50), nullable=False)
 if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']):
@@ -124,19 +125,29 @@ def chatbot():
 @app.route('/submit-form', methods=['POST'])
 def submit_form():
     url = request.form.get('url')
-    version = request.form.get('version')
+    name = request.form.get('name')
     mobile = request.form.get('mobile')
     email = request.form.get('email')
     # do something with the form data
-    print(url, version, email, mobile)
-    if url and version and email and mobile:
-        user = User(url=url, version=version, email=email, mobile=mobile)
+    print(url, name, email, mobile)
+    if url and name and email and mobile:
+        existing_user = User.query.filter_by(url=url, name=name, email=email, mobile=mobile).first()
+        if existing_user:
+            return jsonify({'message': 'Thanks, Data already Submitted!'})
+        user = User(url=url, name=name, email=email, mobile=mobile)
         db.session.add(user)
         db.session.commit()
         #response['message'] = 'Thanks for submitting the form!'
-        return jsonify({'message': 'Form submitted successfully!'})
+        # return jsonify({'message': 'Form submitted successfully!'})
+        return jsonify({'message': 'Thanks for submitting the form!'})
             #response['form'] = False
     else:
         #response['message'] = 'Please fill out all fields.'
-        return jsonify({'message': 'Form submitted successfully!'})
-    return jsonify({'message': 'Form submitted successfully!'})
+        # return jsonify({'message': 'Form submitted successfully!'})
+        return jsonify({'message': 'Please fill out all fields.'})
+    # return jsonify({'message': 'Form submitted successfully!'})
+
+@app.route('/view-data')
+def view_data():
+    users = User.query.all() # retrieve all user data from the database
+    return render_template('view_data.html', users=users)

@@ -166,7 +166,8 @@
     messages.append('<form action="/submit-form" method="POST">' +
         '<div class="form">' +
         '<input type="text" name="url" placeholder="Url">' +
-        '<input type="text" name="version" placeholder="Mgento Version">' +
+        // '<input type="text" name="version" placeholder="Magento Version">' +
+        '<input type="text" name="name" placeholder="Name">' +
         '<input type="text" name="mobile" placeholder="Mobile Number">' +
         '<input type="text" name="email" placeholder="Email">' +
         '<button type="submit" class="submit-button">Submit</button>' +
@@ -180,12 +181,24 @@
             url: '/submit-form',
             method: 'POST',
             data: formData,
+            // success: function(response) {
+            //     addMessage('Bot', response.message);
+            //     $('.form').remove(); // remove the form from the chat container
+            //     location.reload(); // reload the page after form submission
+            // }
             success: function(response) {
                 addMessage('Bot', response.message);
+                setTimeout(function() {
+                location.reload(); // reload the page after a delay
+              }, 3000); // delay for 3 seconds
+              $('form').remove();
             }
+
         });
     });
-}
+    }   
+    
+
 
     button.click(function() {
         var message = input.val();
